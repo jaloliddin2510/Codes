@@ -1,0 +1,19 @@
+import 'package:flutter/material.dart';
+
+class ThemeProvider extends InheritedWidget {
+
+  final bool themeMode;
+
+  final Function() mode;
+  ThemeProvider({Key? key, required this.themeMode,required this.mode,required Widget child}): super(key: key, child: child);
+
+  static ThemeProvider? of(BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<ThemeProvider>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant ThemeProvider oldWidget) {
+    return themeMode != oldWidget.themeMode;
+  }
+
+}
