@@ -1,0 +1,82 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:new_projekt/screens/account.dart';
+import 'package:new_projekt/screens/market.dart';
+import 'package:new_projekt/screens/offer.dart';
+import 'package:new_projekt/screens/search.dart';
+
+import 'cart.dart';
+
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final pages=[
+    const MarketUi(),
+    const Search(),
+    const Cart(),
+    const Offer(),
+    const Account(),
+  ];
+  var pageIndex=0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(child: pages[pageIndex]),
+      bottomNavigationBar: Theme(
+        data: ThemeData(primaryColor: Colors.blue),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          iconSize: 24,
+          onTap: (index) =>setState(() => pageIndex=index),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Color(0xFF40BFFF),
+          unselectedItemColor: Color(0xFF9098B1),
+          selectedIconTheme: IconThemeData(color: Colors.blue),
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon:  SvgPicture.asset('assets/icons/Home.svg',),
+              activeIcon: SvgPicture.asset('assets/icons/Home.svg',color:Colors.blue),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon:  SvgPicture.asset('assets/icons/Search.svg'),
+              activeIcon: SvgPicture.asset('assets/icons/Search.svg',color:Colors.blue),
+              label: 'Explore',
+            ),
+            BottomNavigationBarItem(
+              icon:  SvgPicture.asset('assets/icons/Group.svg'),
+              activeIcon: SvgPicture.asset('assets/icons/Group.svg',color:Colors.blue),
+              label: 'Cart',
+            ),
+            BottomNavigationBarItem(
+              icon:  SvgPicture.asset('assets/icons/Offer.svg',),
+              activeIcon: SvgPicture.asset('assets/icons/Offer.svg',color:Colors.blue),
+              label: 'Offer',
+            ),
+            BottomNavigationBarItem(
+              icon:  SvgPicture.asset('assets/icons/User.svg'),
+              activeIcon: SvgPicture.asset('assets/icons/User.svg',color:Colors.blue),
+              label: 'Account',
+            )
+          ],
+          selectedLabelStyle: TextStyle(
+            fontSize: 12,
+            color: Color(0xFF40BFFF),
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12,
+            color: Color(0xFF9098B1),
+            fontWeight: FontWeight.w400,
+          ),
+
+        ),
+      ),
+    );
+  }
+}
