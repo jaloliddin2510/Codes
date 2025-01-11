@@ -1,0 +1,84 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:model_classes/model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final productList = [
+    Model(type: 'Code', capacity: 18, name: 'Flutter'),
+    Model(type: 'Code', capacity: 18, name: 'Flutter'),
+    Model(type: 'Code', capacity: 18, name: 'Flutter'),
+    Model(type: 'Code', capacity: 18, name: 'Flutter'),
+    Model(type: 'Code', capacity: 18, name: 'Flutter'),
+  ];
+
+  List<Model> model = [];
+
+  saveToStorage() async {
+    final shared = await SharedPreferences.getInstance();
+    final productListString =
+        productList.map((product) => jsonEncode(product.toJson())).toList();
+    await shared.setStringList('key', productListString);
+  }
+
+  readToStorage() async {
+    final shared = await SharedPreferences.getInstance();
+    final productListString = shared.getStringList('key');
+    model = productListString!
+        .map((modelStr) => Model.fromJson(jsonDecode(modelStr)))
+        .toList();
+    setState(() {});
+  }
+  @override
+  void initState() {
+    readToStorage();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: IntrinsicWidth(
+      stepWidth: double.maxFinite,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 100),
+          model.isEmpty
+              ? const Text('This is not value')
+              : ListView.builder(
+                  itemCount: model.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(model[index].name),
+                          Text(model[index].type),
+                          Text(model[index].capacity.toStringAsFixed(2)),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+          OutlinedButton(
+              onPressed: () {
+                setState(() {
+                });
+                saveToStorage();
+              },
+              child: const Text('Save Model'))
+        ],
+      ),
+    ));
+  }
+}
