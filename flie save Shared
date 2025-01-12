@@ -1,0 +1,7 @@
+Future<void> saveImagesToSharedPreferences(List<File> images) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // File obyektlarini path (String) ro‘yxatiga aylantirish
+  List<String> imagePaths = images.map((file) => file.path).toList();
+  // SharedPreferences ga saqlash
+  await prefs.setStringList('images', imagePaths);
+}
