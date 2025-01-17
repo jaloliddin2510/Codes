@@ -1,0 +1,10 @@
+import 'package:sqflite/sqflite.dart';
+
+class DataBaseHelper{
+  static  final DataBaseHelper  _instance=DataBaseHelper._internal();
+   static Database? _database;
+   DataBaseHelper._internal();
+    factory DataBaseHelper(){
+      return _instance;
+    }
+}
