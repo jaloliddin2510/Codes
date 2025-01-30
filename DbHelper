@@ -1,0 +1,104 @@
+import 'package:new_projekt/models/product_model.dart';
+import 'package:sqflite/sqflite.dart';
+
+class DataBaseHelper {
+  static final DataBaseHelper _instance = DataBaseHelper._();
+
+  DataBaseHelper._();
+
+  factory DataBaseHelper() {
+    return _instance;
+  }
+
+  static Database? _userDB;
+  static Database? _productDB;
+
+  Future<Database?> get userDb async {
+    _userDB = await _initUserDB();
+    return _userDB;
+  }
+
+  Future<Database?> get productDB async {
+    _productDB = await _initProductDB();
+    return _productDB;
+  }
+
+  static const userDataBase = 'userDataBase';
+  static const productDatabase = 'productDatabase';
+
+  Future<Database> _initUserDB() async {
+    String dbPath = await getDatabasesPath();
+    String path = '$dbPath/user.db';
+    return await openDatabase(path, version: 1, onCreate: (db, version) async {
+      await db.execute('''
+        CREATE TABLE $userDataBase(
+          name TEXT,
+          lastName TEXT,
+          gender INTEGER NOT NULL,
+          birthday TEXT,
+          email TEXT,
+          phoneNumber TEXT,
+          password TEXT,
+        )
+      ''' );
+    });
+  }
+
+  Future<Database> _initProductDB() async {
+    String dbPath = await getDatabasesPath();
+    String path = '$dbPath/product.db';
+    return await openDatabase(path, version: 1, onCreate: (db, version) async {
+      await db.execute('''
+        CREATE TABLE $productDatabase(
+          name TEXT,
+          lastName TEXT,
+          gender INTEGER NOT NULL,
+          birthday TEXT,
+          email TEXT,
+          phoneNumber TEXT,
+          password TEXT,
+        )
+      ''');
+    });
+  }
+
+  Future<int> addProduct(ProductModel model) async {
+    final db = await productDB;
+    return await db!.insert(productDatabase, model.toJson());
+  }
+
+  Future<int> clearDB() async {
+    final db = await productDB;
+    return db!.delete(productDatabase);
+  }
+
+  Future<int> deleteSelectItem(List<int> list) async {
+    final db = await productDB;
+    final idsString = list.map((id) => '?').join(',');
+    return await db!
+        .delete(productDatabase, where: 'id IN ($idsString)', whereArgs: list);
+  }
+
+  Future<int> updateDB(ProductModel model) async {
+    final db = await productDB;
+    return await db!.update(productDatabase, model.toJson(),
+        where: 'id = ?', whereArgs: [model.id]);
+  }
+
+  Future<List<ProductModel>> getProduct() async {
+    final db = await productDB;
+    final List<Map<String, dynamic>> maps = await db!.query(productDatabase);
+    return List.generate(maps.length, (index) {
+      return ProductModel(
+          id: maps[index]['id'],
+          image: maps[index]['image'],
+          name: maps[index]['name'],
+          price: maps[index]['price'],
+          discount: maps[index]['discount'],
+          size: maps[index]['size'],
+          color: maps[index]['color'],
+          favorite: maps[index]['favorite'],
+          rating: maps[index]['rating']);
+    });
+  }
+}
